@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA FLOW - 프리미엄 요가웨어</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 1. 기본 초기화 및 레이아웃 설정 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            overflow-x: hidden;
+        }
+
+        /* 2. 상단 고정 네비게이션 (로고 + 카테고리 리스트) */
+        .header-nav {
+            width: 100%;
+            background-color: #ffffff;
+            border-bottom: 1px solid #eeeeee;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+        /* 임의의 고급 브랜드 로고 이름 (AURA FLOW) */
+        .brand-logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: #222222;
+            letter-spacing: 2px;
+            margin-right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .brand-logo span {
+            font-size: 14px;
+            font-weight: 300;
+            color: #888888;
+        }
+        .menu-list {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            flex-grow: 1;
+        }
+        .menu-list::-webkit-scrollbar { display: none; } /* 스크롤바 숨김 */
+        .menu-item {
+            text-decoration: none;
+            color: #555555;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 4px;
+            transition: color 0.2s;
+        }
+        .menu-item:hover, .menu-item.active {
+            color: #3B5E77; /* 시그니처 푸른빛 포인트 */
+            font-weight: 700;
+        }
+
+        /* 3. 메인 쇼핑몰 레이아웃 (좌측: 상세 컷 / 우측: 고정 구매창) */
+        .main-layout {
+            max-width: 1300px;
+            margin: 120px auto 100px auto; /* 헤더 공간 확보 */
+            padding: 0 20px;
+            display: flex;
+            gap: 50px;
+        }
+
+        /* 좌측: 화사하고 큼직한 이미지 대량 갤러리 영역 (총 10장) */
+        .gallery-area {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            gap: 80px; /* 사진들이 너무 붙지 않게 여백 대폭 확대 */
+        }
+        .image-card {
+            width: 100%;
+            text-align: center;
+        }
+        .product-img {
+            width: 100%;
+            height: 650px; /* 더 큼직하게 변경 */
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            background-color: #f9f9f9;
+        }
+        /* [변경] 사진 안의 글자들을 사진 밑으로 완벽히 이동 */
+        .img-caption {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #666666;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* 우측: 젝시믹스 스타일 스크롤 고정 플로팅 구매창 (Sticky) */
+        .sticky-order-panel {
+            width: 40%;
+            position: sticky;
+            top: 120px; /* 스크롤 해도 상단 내비 아래에 딱 붙음 */
+            height: fit-content;
+            background-color: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.04);
+        }
+        .goods-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #222222;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .goods-price {
+            font-size: 22px;
+            font-weight: 900;
+            color: #333333;
+            border-bottom: 2px solid #333333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .info-label { color: #888888; }
+        .info-value { color: #333333; font-weight: 500; }
+
+        /* 옵션 선택 드롭다운 */
+        .option-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            outline: none;
+            background-color: #fafafa;
+        }
+
+        /* 구매하기 버튼 */
+        .btn-order {
+            width: 100%;
+            background-color: #3B5E77; /* 자연을 닮은 밝은 시그니처 블루 */
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+        .btn-order:hover { background-color: #2A465B; }
+
+        /* 4. 결제 및 배송정보 팝업 모달창 창 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none; /* 기본 숨김 */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .close-modal {
+            position: absolute;
+            top: 20px; right: 20px;
+            font-size: 24px; cursor: pointer; color: #aaa;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn-submit-pay {
+            width: 100%;
+            background-color: #222222;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-nav">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">AURA FLOW <span>YOGA</span></a>
+            <nav class="menu-list">
+                <a href="#" class="menu-item active">신상</a>
+                <a href="#" class="menu-item">베스트</a>
+                <a href="#" class="menu-item">블랙라벨</a>
+                <a href="#" class="menu-item">SET</a>
+                <a href="#" class="menu-item">아울렛</a>
+                <a href="#" class="menu-item">우먼즈</a>
+                <a href="#" class="menu-item">맨즈</a>
+                <a href="#" class="menu-item">RX러닝</a>
+                <a href="#" class="menu-item">이너웨어</a>
+                <a href="#" class="menu-item">스윔웨어</a>
+                <a href="#" class="menu-item">골프</a>
+                <a href="#" class="menu-item">NX</a>
+                <a href="#" class="menu-item">키즈</a>
+                <a href="#" class="menu-item">슈즈&용품</a>
+                <a href="#" class="menu-item">기획전</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        
+        <section class="gallery-area">
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">01. 화사한 아침 햇살을 품은 내추럴 로즈핏 상의 연출</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">02. 맑은 바닷가 바람과 함께하는 4-WAY 고탄성 레깅스 핏</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">03. 쾌적한 야외 잔디 위에서의 자유로운 풀 스트레칭 동작</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">04. 몸의 라인을 완벽하게 잡아주는 익스트림 컴프레션 텍스처</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">05. 부드러운 스톤 그레이 톤의 백라인 테이핑 디테일 컷</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-15 Swan?auto=format&fit=crop&w=1200&q=80'); background-image: url('https://images.unsplash.com/photo-1552196564-972b3a03024b?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">06. 땀을 빠르게 흡수 건조 시키는 특수 에코 메시 패턴 구조</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1510894347713-fc3ed6fdf539?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">07. 실내 자연광 조명 아래 자연스러운 일상 믹스매치 룩</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1524864151296-2991ac66fad4?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">08. 가볍고 찰랑이는 촉감의 프리미엄 원사 단면 상세 정보</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1588286840104-8957b019727f?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">09. 명상과 힐링에 최적화된 편안한 무압박 허리 밴드 디테일</div>
+            </div>
+            <div class="image-card">
+                <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="img-caption">10. 잦은 동작 변화에도 유연하게 복원되는 프리미엄 고탄성 복원 피팅 마감</div>
+            </div>
+        </section>
+
+        <aside class="sticky-order-panel">
+            <div class="goods-name">[블랙라벨] 시그니처 4-WAY 에코 라이트 타이즈</div>
+            <div class="goods-price">39,000원</div>
+            
+            <div class="info-row">
+                <span class="info-label">배송 정보</span>
+                <span class="info-value">무료 배송 (도서산간 제외 / 2시 이전 주문 시 당일 출고)</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">포인트 적립</span>
+                <span class="info-value">구매 금액의 최대 5% 회원 적립</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">원단 특성</span>
+                <span class="info-value">친환경 나일론 복합사 / 흡한속건</span>
+            </div>
+
+            <select class="option-select">
+                <option value="">-[필수] 색상 옵션 선택-</option>
+                <option value="eucalyptus">에코 유칼립투스 그린</option>
+                <option value="stone">차분한 오션 스톤 그레이</option>
+                <option value="rose">소프트 선라이즈 로즈</option>
+                <option value="black">클래식 블랙벨벳</option>
+            </select>
+
+            <select class="option-select">
+                <option value="">-[필수] 사이즈 옵션 선택-</option>
+                <option value="S">S (국내 44~슬림55)</option>
+                <option value="M">M (국내 정55~66)</option>
+                <option value="L">L (국내 77)</option>
+                <option value="XL">XL (국내 88)</option>
+            </select>
+
+            <button class="btn-order" onclick="openOrderModal()">구매하기</button>
+        </aside>
+    </main>
+
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeOrderModal()">&times;</span>
+            <div class="modal-title">주문 / 배송 정보 입력</div>
+            
+            <form onsubmit="handlePayment(event)">
+                <div class="form-group">
+                    <label>주문 고객명</label>
+                    <input type="text" placeholder="이름을 입력해주세요" required>
+                </div>
+                <div class="form-group">
+                    <label>휴대폰 번호</label>
+                    <input type="tel" placeholder="010-0000-0000" required>
+                </div>
+                <div class="form-group">
+                    <label>배송지 주소</label>
+                    <input type="text" placeholder="기본 주소를 입력해주세요" style="margin-bottom: 5px;" required>
+                    <input type="text" placeholder="상세 주소를 입력해주세요">
+                </div>
+                <div class="form-group">
+                    <label>배송 요청 사항</label>
+                    <select>
+                        <option>문 앞에 놓아주세요</option>
+                        <option>경비실에 맡겨주세요</option>
+                        <option>배송 전 연락 부탁드립니다</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>결제 수단 선택</label>
+                    <select id="paymentMethod">
+                        <option value="card">신용/체크카드 결제</option>
+                        <option value="kakao">카카오페이 / 네이버페이 간편결제</option>
+                        <option value="vbank">가상계좌 무통장입금</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit-pay">안전 결제하기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 모달 열기
+        function openOrderModal() {
+            document.getElementById('orderModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 방지
+        }
+
+        // 모달 닫기
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 뒷배경 스크롤 복구
+        }
+
+        // 결제 완료 핸들러
+        function handlePayment(event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+            alert("주문 접수가 성공적으로 완료되었습니다! 안전하게 배송해 드릴게요. 😊");
+            closeOrderModal();
+        }
+    </script>
+
+</body>
+</html>
